@@ -50,7 +50,6 @@ public class Service {
             }
 
             frontera = expandir(actual, problema, frontera);
-//			System.out.println(frontera.size());
         }
 
         return null;
@@ -65,18 +64,17 @@ public class Service {
         // expandir el nodo origen
         if (numCiudadesVisitadas == 0) {
             for (int i = 1; i < numCiudadesTotales; i++) {
-                if (!ciudadesVisitadas.contains(i)) {
-                    Estado estado = new Estado(actual.getEstado(), new Ciudad(i));
-                    frontera.add(new Nodo(estado, problema,
-                            actual, problema.getDistEntre(0, i), minimumSpanningTree));
-                }
+                Estado estado = new Estado(actual.getEstado(), new Ciudad(i));
+                frontera.add(new Nodo(estado, problema,
+                        actual, problema.getDistEntre(0, i), minimumSpanningTree));
+
             }
 
             // expandir un nodo en el que solo falta aniadir la ciudad origen 0
         } else if (numCiudadesVisitadas == numCiudadesTotales - 1) {
             ciudadActual = actual.getEstado().getCiudadActual();
-            frontera.add(new Nodo(new Estado(actual.getEstado(), new Ciudad(0)), problema,
-                    actual, problema.getDistEntre(ciudadActual, 0), minimumSpanningTree));
+            frontera.add(new Nodo(new Estado(actual.getEstado(), new Ciudad(0)),
+                    actual, problema.getDistEntre(ciudadActual, 0)));
 
             // expandir un nodo en el que solo falta aniadir una ciudad  y el origen 0
         } else if (numCiudadesVisitadas == numCiudadesTotales - 2) {
@@ -91,10 +89,10 @@ public class Service {
                 }
                 i++;
             }
-
             Estado estado = new Estado(actual.getEstado(), new Ciudad(ciudadFinal));
             frontera.add(new Nodo(estado, problema,
                     actual, problema.getDistEntre(ciudadActual, ciudadFinal), minimumSpanningTree));
+
             // expandir cualquier otro estado intermedio
         } else {
             ciudadActual = actual.getEstado().getCiudadActual();

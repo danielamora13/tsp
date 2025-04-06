@@ -7,6 +7,8 @@ public class MinimumSpanningTree {
 
     double[][] distancias;
     ArrayList<Integer> ciudadesVisitadas;
+    Arista arista = new Arista();
+    Arista nuevaArista = new Arista();
 
     public MinimumSpanningTree(int numCiudades) {
         distancias = new double[numCiudades][numCiudades];
@@ -47,19 +49,18 @@ public class MinimumSpanningTree {
         int verticeOrigen = randomVertice(numCiudades);
         visitados[verticeOrigen] = true;
         double minDistancia;
-        Arista arista;
 
         //recorremos las filas
         for (int i = 0; i < numCiudades - 1; i++) {
-            minDistancia = Integer.MAX_VALUE;
-            arista = null;
+            arista.setPeso(Integer.MAX_VALUE);
             //recorremos las columnas
             for (int j = 0; j < numCiudades; j++) {
                 if (visitados[j]) {
-                    Arista nuevaArista = calcularDistanciaMinima(j, distancias, visitados);
-                    if (nuevaArista.getPeso() < minDistancia) {
-                        minDistancia = nuevaArista.getPeso();
-                        arista = nuevaArista;
+                    calcularDistanciaMinima(j, distancias, visitados);
+                    if (nuevaArista.getPeso() < arista.getPeso()) {
+                        arista.setOrigen(nuevaArista.getOrigen());
+                        arista.setDestino(nuevaArista.getDestino());
+                        arista.setPeso(nuevaArista.getPeso());
                     }
                 }
             }
@@ -69,9 +70,8 @@ public class MinimumSpanningTree {
         return h;
     }
 
-    private Arista calcularDistanciaMinima(int origen, double[][] grafo, boolean[] visitados) {
+    private void calcularDistanciaMinima(int origen, double[][] grafo, boolean[] visitados) {
         double minDistancia = Integer.MAX_VALUE;
-        Arista arista = new Arista();
         int destino = -1;
 
         for (int i = 0; i < visitados.length; i++) {
@@ -81,12 +81,15 @@ public class MinimumSpanningTree {
             }
         }
 
-        arista.setOrigen(origen);
-        arista.setDestino(destino);
-        arista.setPeso(minDistancia);
-        return arista;
+        nuevaArista.setOrigen(origen);
+        nuevaArista.setDestino(destino);
+        nuevaArista.setPeso(minDistancia);
     }
 
+    /** Metodo que elige un vertice aleatoriamente en un grafo
+     * @param vertices numero de vertices del grafo
+     * @return vertice escogido
+     */
     public int randomVertice(int vertices) {
         Random r = new Random();
         int low = 0;
