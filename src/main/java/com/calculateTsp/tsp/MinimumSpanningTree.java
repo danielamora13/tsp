@@ -47,36 +47,24 @@ public class MinimumSpanningTree {
         int verticeOrigen = randomVertice(numCiudades);
         visitados[verticeOrigen] = true;
         double minDistancia;
-//        double peso;
-//        int destino;
         Arista arista;
 
         //recorremos las filas
         for (int i = 0; i < numCiudades - 1; i++) {
             minDistancia = Integer.MAX_VALUE;
-//            peso = 0.0;
-//            destino = -1;
             arista = null;
             //recorremos las columnas
             for (int j = 0; j < numCiudades; j++) {
                 if (visitados[j]) {
-//                    double nuevoPeso = calcularDistanciaMinima(j, distancias, visitados);
                     Arista nuevaArista = calcularDistanciaMinima(j, distancias, visitados);
                     if (nuevaArista.getPeso() < minDistancia) {
                         minDistancia = nuevaArista.getPeso();
                         arista = nuevaArista;
                     }
-//                    if (nuevoPeso < minDistancia) {
-//                        minDistancia = nuevoPeso;
-//                        peso = nuevoPeso;
-//                        destino = j;
-//                    }
                 }
             }
             visitados[arista.getDestino()] = true;
             h += arista.getPeso();
-//            visitados[destino] = true;
-//            h += peso;
         }
         return h;
     }
@@ -99,10 +87,6 @@ public class MinimumSpanningTree {
         return arista;
     }
 
-    /** Metodo que elige un vertice aleatoriamente en un grafo
-     * @param vertices numero de vertices del grafo
-     * @return vertice escogido
-     */
     public int randomVertice(int vertices) {
         Random r = new Random();
         int low = 0;
