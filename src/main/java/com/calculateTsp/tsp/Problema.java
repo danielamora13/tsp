@@ -29,20 +29,12 @@ public class Problema {
     }
 
     // OBSERVADORES Y MODIFICADORES
-    public Ciudad[] getCiudades() {
-        return ciudades;
-    }
-
     public void setCiudades ( Ciudad[] vCiudades ) {
         int numCiudadesConOri = vCiudades.length;
         ciudades = new Ciudad[numCiudadesConOri];
         for( int i=0; i<numCiudadesConOri; i++ ) {
             ciudades[i]=vCiudades[i];
         }
-    }
-
-    public double[][] getDistancias(){
-        return distancias;
     }
 
     public void setDistancias( double[][] dist ) {
@@ -63,11 +55,6 @@ public class Problema {
             return Integer.MAX_VALUE;
     }
 
-    public void setDistEntre(int i, int j, double dist) {
-        if( 0 <= i && i <= getNumCiudades() && 0 <= j && j <= getNumCiudades() )
-            distancias[i][j] = dist;
-    }
-
     public boolean esMeta(Estado estado) {
         if (estado.getCiudadesVisitadas().size() == ciudades.length) {
             return true;
@@ -75,19 +62,7 @@ public class Problema {
         return false;
     }
 
-    /**
-     * @return el origen del tour
-     */
-
     // METODOS PRIVADOS (AUXILIARES)
-
-
-    /** Metodo para leer de fichero el problema
-     * El fichero sigue el formato de tsplib
-     * (ver http://vrp.atd-lab.inf.puc-rio.br/attachments/article/6/TSPLIB%2095.pdf)
-     * @param nomFich
-     * @throws Exception
-     */
     private void leeDeFichero( String nomFich ) throws Exception {
         int dimension = 0;
         try {

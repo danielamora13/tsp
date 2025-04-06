@@ -6,7 +6,6 @@ public class Estado {
 
     private ArrayList<Ciudad> ciudadesVisitadas = new ArrayList<Ciudad>();
 
-
     public Estado() {
     }
 

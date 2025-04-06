@@ -1,14 +1,20 @@
 package com.calculateTsp.tsp;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 @org.springframework.stereotype.Service
 public class Service {
+
+    private MinimumSpanningTree minimumSpanningTree;
+
     public Nodo busqueda(double[][] distancias) {
         Problema problema = new Problema(distancias);
         Busqueda busqueda = new Busqueda(problema);
         PriorityQueue<Nodo> frontera = busqueda.getFrontera();
+        minimumSpanningTree = new MinimumSpanningTree(problema.getNumCiudades());
 
         Nodo actual = new Nodo(new Estado());
         frontera.add(actual);
@@ -30,6 +36,7 @@ public class Service {
         Problema problema = new Problema(file);
         Busqueda busqueda = new Busqueda(problema);
         PriorityQueue<Nodo> frontera = busqueda.getFrontera();
+        minimumSpanningTree = new MinimumSpanningTree(problema.getNumCiudades());
 
         Nodo actual = new Nodo(new Estado());
         frontera.add(actual);
@@ -60,17 +67,16 @@ public class Service {
             for (int i = 1; i < numCiudadesTotales; i++) {
                 if (!ciudadesVisitadas.contains(i)) {
                     Estado estado = new Estado(actual.getEstado(), new Ciudad(i));
-                    double h = setH(problema, estado);
                     frontera.add(new Nodo(estado,
-                            actual, problema.getDistEntre(0, i), h));
+                            actual, problema.getDistEntre(0, i)));
                 }
             }
 
             // expandir un nodo en el que solo falta aniadir la ciudad origen 0
         } else if (numCiudadesVisitadas == numCiudadesTotales - 1) {
             ciudadActual = actual.getEstado().getCiudadActual();
-            frontera.add(new Nodo(new Estado(actual.getEstado(), new Ciudad(0)),
-                    actual, problema.getDistEntre(ciudadActual, 0)));
+            frontera.add(new Nodo(new Estado(actual.getEstado(), new Ciudad(0)), problema,
+                    actual, problema.getDistEntre(ciudadActual, 0), minimumSpanningTree));
 
             // expandir un nodo en el que solo falta aniadir una ciudad  y el origen 0
         } else if (numCiudadesVisitadas == numCiudadesTotales - 2) {
@@ -87,9 +93,8 @@ public class Service {
             }
 
             Estado estado = new Estado(actual.getEstado(), new Ciudad(ciudadFinal));
-            double h = setH(problema, estado);
-            frontera.add(new Nodo(estado,
-                    actual, problema.getDistEntre(ciudadActual, ciudadFinal), h));
+            frontera.add(new Nodo(estado, problema,
+                    actual, problema.getDistEntre(ciudadActual, ciudadFinal), minimumSpanningTree));
             // expandir cualquier otro estado intermedio
         } else {
             ciudadActual = actual.getEstado().getCiudadActual();
@@ -97,43 +102,12 @@ public class Service {
 
                 if (!ciudadesVisitadas.contains(i)) {
                     Estado estado = new Estado(actual.getEstado(), new Ciudad(i));
-                    double h = setH(problema, estado);
-                    frontera.add(new Nodo(estado,
-                            actual, problema.getDistEntre(ciudadActual, i), h));
+                    frontera.add(new Nodo(estado, problema,
+                            actual, problema.getDistEntre(ciudadActual, i), minimumSpanningTree));
                 }
             }
         }
         return frontera;
     }
 
-    public double setH(Problema problema, Estado estado) {
-        ArrayList<Integer> ciudadesVisitadas = estado.getIdCiudades();
-        int ciudadActual = estado.getCiudadActual();
-
-        int numCiudadesTotales = problema.getNumCiudades();
-        int numCiudades = numCiudadesTotales - ciudadesVisitadas.size() + 1; // +1 para aniadir la ciudad actual
-        double[][] distancias = new double[numCiudades][numCiudades];
-        int indice1 = 0;
-        int indice2;
-
-        for (int i = 0; i < numCiudadesTotales; i++) {
-            indice2 = 0;
-
-            if (!ciudadesVisitadas.contains(i) || i == ciudadActual) {
-                for (int j = 0; j < numCiudadesTotales; j++) {
-
-                    if (!ciudadesVisitadas.contains(j) || j == ciudadActual) {
-                        distancias[indice1][indice2] = problema.getDistEntre(i, j);
-                        indice2++;
-                    }
-
-                }
-                indice1++;
-            }
-        }
-
-        MinimumSpanningTree mst = new MinimumSpanningTree();
-
-        return mst.calcularMst(distancias);
-    }
 }
