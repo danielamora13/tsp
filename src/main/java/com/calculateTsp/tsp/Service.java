@@ -67,8 +67,8 @@ public class Service {
             for (int i = 1; i < numCiudadesTotales; i++) {
                 if (!ciudadesVisitadas.contains(i)) {
                     Estado estado = new Estado(actual.getEstado(), new Ciudad(i));
-                    frontera.add(new Nodo(estado,
-                            actual, problema.getDistEntre(0, i)));
+                    frontera.add(new Nodo(estado, problema,
+                            actual, problema.getDistEntre(0, i), minimumSpanningTree));
                 }
             }
 

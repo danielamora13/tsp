@@ -9,7 +9,7 @@ public class MinimumSpanningTree {
     ArrayList<Integer> ciudadesVisitadas;
 
     public MinimumSpanningTree(int numCiudades) {
-        distancias = new double[numCiudades - 1][numCiudades - 1];
+        distancias = new double[numCiudades][numCiudades];
     }
 
     public double setH(Problema problema, Estado estado) {
