@@ -6,7 +6,6 @@ import java.util.Random;
 public class MinimumSpanningTree {
 
     double[][] distancias;
-    ArrayList<Integer> ciudadesVisitadas;
     Arista arista = new Arista();
     Arista nuevaArista = new Arista();
 
@@ -14,32 +13,37 @@ public class MinimumSpanningTree {
         distancias = new double[numCiudades][numCiudades];
     }
 
-    public double setH(Problema problema, Estado estado) {
-        ciudadesVisitadas = estado.getIdCiudades();
-        int ciudadActual = estado.getCiudadActual();
+    public double setH(Problema problema, ArrayList<Integer> estado, int ciudadActual) {
+        double mst;
+        try {
 
-        int numCiudadesTotales = problema.getNumCiudades();
-        int numCiudades = numCiudadesTotales - ciudadesVisitadas.size() + 1; // +1 para aniadir la ciudad actual
-        int indice1 = 0;
-        int indice2;
+            int numCiudadesTotales = problema.getNumCiudades();
+            int numCiudades = numCiudadesTotales - estado.size() + 1; // +1 para aniadir la ciudad actual
+            int indice1 = 0;
+            int indice2;
 
-        for (int i = 0; i < numCiudadesTotales; i++) {
-            indice2 = 0;
+            for (int i = 0; i < numCiudadesTotales; i++) {
+                indice2 = 0;
 
-            if (!ciudadesVisitadas.contains(i) || i == ciudadActual) {
-                for (int j = 0; j < numCiudadesTotales; j++) {
+                if (!estado.contains(i) || i == ciudadActual) {
+                    for (int j = 0; j < numCiudadesTotales; j++) {
 
-                    if (!ciudadesVisitadas.contains(j) || j == ciudadActual) {
-                        distancias[indice1][indice2] = problema.getDistEntre(i, j);
-                        indice2++;
+                        if (!estado.contains(j) || j == ciudadActual) {
+                            distancias[indice1][indice2] = problema.getDistEntre(i, j);
+                            indice2++;
+                        }
+
                     }
-
+                    indice1++;
                 }
-                indice1++;
             }
-        }
+            mst = calcularMst(distancias, numCiudades);
 
-        return calcularMst(distancias, numCiudades);
+        } catch (OutOfMemoryError err) {
+            System.out.println("en setH");
+            throw new RuntimeException();
+        }
+        return mst;
     }
 
     private double calcularMst(double[][] distancias, int numCiudades) {

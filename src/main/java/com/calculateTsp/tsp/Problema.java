@@ -1,19 +1,20 @@
 package com.calculateTsp.tsp;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Problema {
-    private Ciudad[] ciudades; // ciudades a visitar (incluyendo ciudad 0, origen)
+    private int[] ciudades; // ciudades a visitar (incluyendo ciudad 0, origen)
     private double[][] distancias; // distancias entre ciudades
 
     // CONSTRUCTORES
     public Problema( double[][] distancias ) {
         // CREAMOS LISTA DE CIUDADES
         int dimension = distancias.length;
-        Ciudad[] ciudades = new Ciudad[dimension];
+        int[] ciudades = new int[dimension];
         for (int i = 0; i < dimension; i++) {
-            ciudades[i] = new Ciudad(i);
+            ciudades[i] = i;
         }
         setCiudades( ciudades );
         setDistancias( distancias );
@@ -29,19 +30,16 @@ public class Problema {
     }
 
     // OBSERVADORES Y MODIFICADORES
-    public void setCiudades ( Ciudad[] vCiudades ) {
+    public void setCiudades ( int[] vCiudades ) {
         int numCiudadesConOri = vCiudades.length;
-        ciudades = new Ciudad[numCiudadesConOri];
-        for( int i=0; i<numCiudadesConOri; i++ ) {
-            ciudades[i]=vCiudades[i];
-        }
+        ciudades = new int[numCiudadesConOri];
+        System.arraycopy(vCiudades, 0, ciudades, 0, numCiudadesConOri);
     }
 
     public void setDistancias( double[][] dist ) {
         distancias = new double[dist.length][dist[0].length];
         for( int i=0; i<dist.length; i++)
-            for( int j=0; j<dist[0].length; j++ )
-                distancias[i][j]=dist[i][j];
+            System.arraycopy(dist[i], 0, distancias[i], 0, dist[0].length);
     }
 
     public int getNumCiudades() {
@@ -55,11 +53,8 @@ public class Problema {
             return Integer.MAX_VALUE;
     }
 
-    public boolean esMeta(Estado estado) {
-        if (estado.getCiudadesVisitadas().size() == ciudades.length) {
-            return true;
-        }
-        return false;
+    public boolean esMeta(ArrayList<Integer> estado) {
+        return estado.size() == ciudades.length;
     }
 
     // METODOS PRIVADOS (AUXILIARES)
@@ -91,9 +86,9 @@ public class Problema {
                 throw new Exception("Mal los datos... no hay dimension");
             }
             // CREAMOS LISTA DE CIUDADES
-            Ciudad[] ciudades = new Ciudad [dimension];
+            int[] ciudades = new int[dimension];
             for (int i = 0; i < dimension; i++){
-                ciudades[i] = new Ciudad(i);
+                ciudades[i] = i;
             }
             setCiudades(ciudades);
             // Comprobamos que se dan las distancias explicitas
@@ -245,9 +240,7 @@ public class Problema {
                     double yGeo;
                     int idGeo = 0;
                     while (!s.equals("EOF")) {
-                        System.out.println("antes");
                         yGeo = Double.parseDouble(dis.next());
-                        System.out.println(yGeo);
                         grados = Math.floor(yGeo);
                         minutos = yGeo - grados;
                         xGeo = Math.PI * (grados + 5.0 * minutos / 3.0) / 180.0;
@@ -262,7 +255,6 @@ public class Problema {
                         idGeo++;
                         dis.nextLine();
                         s = dis.next();
-                        System.out.println(s);
                     }
 
                     double r = 6378.388;

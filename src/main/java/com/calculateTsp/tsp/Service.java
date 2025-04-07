@@ -1,5 +1,6 @@
 package com.calculateTsp.tsp;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class Service {
         PriorityQueue<Nodo> frontera = busqueda.getFrontera();
         minimumSpanningTree = new MinimumSpanningTree(problema.getNumCiudades());
 
-        Nodo actual = new Nodo(new Estado());
+        Nodo actual = new Nodo(new ArrayList<>());
         frontera.add(actual);
 
         while (!frontera.isEmpty()) {
@@ -38,25 +39,34 @@ public class Service {
         PriorityQueue<Nodo> frontera = busqueda.getFrontera();
         minimumSpanningTree = new MinimumSpanningTree(problema.getNumCiudades());
 
-        Nodo actual = new Nodo(new Estado());
+        Nodo actual = new Nodo(new ArrayList<>());
         frontera.add(actual);
+//        int i = 0;
 
-        while (!frontera.isEmpty()) {
-            actual = frontera.poll();
+        try {
+            while (!frontera.isEmpty()) {
+                actual = frontera.poll();
 
-            if (problema.esMeta(actual.getEstado())) {
-                System.out.println("Nodos en frontera: " + busqueda.getFrontera().size());
-                return actual;
+                if (problema.esMeta(actual.getEstado())) {
+                    System.out.println("Nodos en frontera: " + busqueda.getFrontera().size());
+                    return actual;
+                }
+
+                expandir(actual, problema, frontera);
+//                System.out.println("frontera size: " + frontera.size() + "en iteracion: " + i);
+//                System.out.println(actual);
+//                i ++;
             }
-
-            frontera = expandir(actual, problema, frontera);
+        } catch (OutOfMemoryError err) {
+            System.out.println("en busqueda");
+            return actual;
         }
 
         return null;
     }
 
     private PriorityQueue<Nodo> expandir(Nodo actual, Problema problema, PriorityQueue<Nodo> frontera) {
-        ArrayList<Integer> ciudadesVisitadas = actual.getEstado().getIdCiudades();
+        ArrayList<Integer> ciudadesVisitadas = actual.getEstado();
         int numCiudadesVisitadas = ciudadesVisitadas.size();
         int numCiudadesTotales = problema.getNumCiudades();
         int ciudadActual;
@@ -64,45 +74,65 @@ public class Service {
         // expandir el nodo origen
         if (numCiudadesVisitadas == 0) {
             for (int i = 1; i < numCiudadesTotales; i++) {
-                Estado estado = new Estado(actual.getEstado(), new Ciudad(i));
-                frontera.add(new Nodo(estado, problema,
-                        actual, problema.getDistEntre(0, i), minimumSpanningTree));
+                frontera.add(new Nodo(problema,
+                        actual, i, problema.getDistEntre(0, i), minimumSpanningTree));
 
             }
 
             // expandir un nodo en el que solo falta aniadir la ciudad origen 0
         } else if (numCiudadesVisitadas == numCiudadesTotales - 1) {
-            ciudadActual = actual.getEstado().getCiudadActual();
-            frontera.add(new Nodo(new Estado(actual.getEstado(), new Ciudad(0)),
-                    actual, problema.getDistEntre(ciudadActual, 0)));
+
+            System.out.println("llega a numCiudadesTotales - 1");
+            System.out.println(frontera.peek());
+            try {
+                ciudadActual = actual.getCiudadActual();
+                frontera.add(new Nodo(actual, 0, problema.getDistEntre(ciudadActual, 0)));
+
+            } catch (OutOfMemoryError err) {
+                System.out.println("en service estado numCiudadesTotales - 1");
+                System.out.println(frontera.size());
+                throw new ArrayIndexOutOfBoundsException();
+            }
 
             // expandir un nodo en el que solo falta aniadir una ciudad  y el origen 0
         } else if (numCiudadesVisitadas == numCiudadesTotales - 2) {
-            ciudadActual = actual.getEstado().getCiudadActual();
-            int ciudadFinal = -1;
-            int i = 1;
-            boolean encontrada = false;
-            while (!encontrada && i < numCiudadesTotales) {
-                if (!ciudadesVisitadas.contains(i)) {
-                    ciudadFinal = i;
-                    encontrada = true;
+            System.out.println("llega a numCiudadesTotales - 2");
+            System.out.println(frontera.peek());
+            try {
+                ciudadActual = actual.getCiudadActual();
+                int ciudadFinal = -1;
+                int i = 1;
+                boolean encontrada = false;
+                while (!encontrada && i < numCiudadesTotales) {
+                    if (!ciudadesVisitadas.contains(i)) {
+                        ciudadFinal = i;
+                        encontrada = true;
+                    }
+                    i++;
                 }
-                i++;
+                frontera.add(new Nodo(problema,
+                        actual, ciudadFinal, problema.getDistEntre(ciudadActual, ciudadFinal), minimumSpanningTree));
+
+            } catch (OutOfMemoryError err) {
+                System.out.println("en service estado numCiudadesTotales - 2");
+                System.out.println(frontera.size());
+                throw new ArrayStoreException();
             }
-            Estado estado = new Estado(actual.getEstado(), new Ciudad(ciudadFinal));
-            frontera.add(new Nodo(estado, problema,
-                    actual, problema.getDistEntre(ciudadActual, ciudadFinal), minimumSpanningTree));
 
             // expandir cualquier otro estado intermedio
         } else {
-            ciudadActual = actual.getEstado().getCiudadActual();
-            for (int i = 1; i < numCiudadesTotales; i++) {
-
-                if (!ciudadesVisitadas.contains(i)) {
-                    Estado estado = new Estado(actual.getEstado(), new Ciudad(i));
-                    frontera.add(new Nodo(estado, problema,
-                            actual, problema.getDistEntre(ciudadActual, i), minimumSpanningTree));
+            try {
+                ciudadActual = actual.getCiudadActual();
+                for (int i = 1; i < numCiudadesTotales; i++) {
+                    if (!ciudadesVisitadas.contains(i)) {
+                        frontera.add(new Nodo(problema,
+                                actual, i, problema.getDistEntre(ciudadActual, i), minimumSpanningTree));
+                    }
                 }
+            } catch (OutOfMemoryError err) {
+
+                System.out.println("en service estado intermedio, La frontera es ");
+                return frontera;
             }
         }
         return frontera;

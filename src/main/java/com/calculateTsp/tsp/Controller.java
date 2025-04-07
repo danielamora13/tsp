@@ -18,10 +18,17 @@ public class Controller {
 
     @PostMapping("/file")
     public String resolveTspFile(@RequestParam String file) {
-        long startTime = System.currentTimeMillis();
-        String result = service.busquedaFile(file).toString();
-        long endTime = System.currentTimeMillis() - startTime;
-        System.out.println("Tiempo de ejecución: " + endTime);
+        String result;
+        try {
+            long startTime = System.currentTimeMillis();
+            result = service.busquedaFile(file).toString();
+            long endTime = System.currentTimeMillis() - startTime;
+            System.out.println("Tiempo de ejecución: " + endTime);
+        } catch (OutOfMemoryError err) {
+            System.out.println("en controller");
+
+            throw new ArrayIndexOutOfBoundsException();
+        }
         return result;
     }
 }

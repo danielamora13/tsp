@@ -1,39 +1,53 @@
 package com.calculateTsp.tsp;
 
-import lombok.Getter;
-
 import java.util.ArrayList;
 
 public class Nodo implements Comparable<Nodo> {
-    private Estado estado;
+    private ArrayList<Integer> estado = new ArrayList<>();
     private double g = 0.0;
     private double h = 0.0;
+
     private double f = g + h;
 
-    public Nodo (Estado estado) {
+    public Nodo (ArrayList<Integer> estado) {
         this.estado = estado;
     }
 
-    public Nodo (Estado estado, Problema problema, Nodo padre, double coste, MinimumSpanningTree mst) {
-        this.estado = estado;
+    public Nodo (Problema problema, Nodo padre, int nuevaCiudad, double coste, MinimumSpanningTree mst) {
+        this.estado.addAll(padre.estado);
+        this.estado.add(nuevaCiudad);
         this.g = padre.g + coste;
-        this.h = mst.setH(problema, estado);
+        this.h = mst.setH(problema, estado, nuevaCiudad);
         setF();
     }
 
-    public Nodo (Estado estado, Nodo padre, double coste) {
-        this.estado = estado;
+    public Nodo (Nodo padre, int nuevaCiudad, double coste) {
+        this.estado.addAll(padre.estado);
+        this.estado.add(nuevaCiudad);
         this.g = padre.g + coste;
         setF();
     }
 
-    public Estado getEstado() {
+    public ArrayList<Integer> getEstado() {
         return estado;
     }
 
     public double getG() {
         return g;
     }
+    public double getF() {
+        return f;
+    }
+    public double getH() {
+        return h;
+    }
+
+    public int getCiudadActual() {
+        int numCiudadesVisitadas = estado.size();
+        return estado.get(numCiudadesVisitadas - 1);
+
+    }
+
     public void setF() {
         f = g + h;
     }
@@ -46,7 +60,9 @@ public class Nodo implements Comparable<Nodo> {
     @Override
     public String toString(){
         return "[ estado: " + getEstado().toString() +
-                " coste: " + getG() + "]";
+                " coste: " + getG() +
+                " h: " + getH() +
+                " f: " + getF() + "]";
     }
 
     @Override
