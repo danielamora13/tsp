@@ -35,17 +35,10 @@ public class Nodo implements Comparable<Nodo> {
     public double getG() {
         return g;
     }
-    public double getF() {
-        return f;
-    }
-    public double getH() {
-        return h;
-    }
 
     public int getCiudadActual() {
         int numCiudadesVisitadas = estado.size();
         return estado.get(numCiudadesVisitadas - 1);
-
     }
 
     public void setF() {
@@ -60,9 +53,7 @@ public class Nodo implements Comparable<Nodo> {
     @Override
     public String toString(){
         return "[ estado: " + getEstado().toString() +
-                " coste: " + getG() +
-                " h: " + getH() +
-                " f: " + getF() + "]";
+                " coste: " + getG() + "]";
     }
 
     @Override

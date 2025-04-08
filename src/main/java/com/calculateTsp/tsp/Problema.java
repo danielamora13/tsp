@@ -1,6 +1,7 @@
 package com.calculateTsp.tsp;
 
 import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -62,7 +63,7 @@ public class Problema {
         int dimension = 0;
         try {
             //
-            Scanner dis = new Scanner(new FileInputStream("C:/Users/danie/Documents/Grado Matemáticas/Cuarto/IntroSisInteligentes/Practicas/Workspace/calculateTsp/calculateTsp/src/main/java/com/tsp/calculateTsp/" + nomFich));
+            Scanner dis = new Scanner(new FileInputStream("src/main/java/com/calculateTsp/tsp/" + nomFich), StandardCharsets.UTF_8);
             String s="";
             // tiene que ser de tipo TSP
             while (dis.hasNext() && !s.contains("TSP")) {
@@ -152,10 +153,7 @@ public class Problema {
                     int id = 0;
 
                     while (!s.equals("EOF")) {
-                        System.out.println(s);
-
                         x = Double.parseDouble(dis.next());
-                        System.out.println(x);
                         coord[id][0] = x;
                         x = Double.parseDouble(dis.next());
                         coord[id][1] = x;
@@ -164,7 +162,6 @@ public class Problema {
                         s = dis.next();
                     }
 
-                    System.out.println(coord);
                     double y;
                     for (int i = 0; i < dimension-1; i++) {
                         for (int j = i+1; j < dimension; j++) {
@@ -224,7 +221,6 @@ public class Problema {
 //					}
 //					dis.nextLine();
 //					s=dis.next();
-                    System.out.println(s);
                     if(!s.equals("NODE_COORD_SECTION")) {
                         dis.close();
                         throw new Exception("Mal los datos ... no se dan las coordenadas");
@@ -233,7 +229,6 @@ public class Problema {
                     double[][] coordGeo = new double[dimension][2];
                     s = dis.nextLine();
                     double si = Double.parseDouble(dis.next());
-                    System.out.println(si);
                     double grados;
                     double minutos;
                     double xGeo;
@@ -262,12 +257,12 @@ public class Problema {
                     double q2;
                     double q3;
                     double z;
-                    for (int i = 0; i < dimension-1; i++) {
-                        for (int j = i+1; j < dimension; j++) {
+                    for (int i = 0; i < dimension - 1; i++) {
+                        for (int j = i + 1; j < dimension; j++) {
                             q1 = Math.cos(coordGeo[i][1] - coordGeo[j][1] );
                             q2 = Math.cos(coordGeo[i][0] - coordGeo[j][0] );
                             q3 = Math.cos(coordGeo[i][0] + coordGeo[j][0] );
-                            z = r * Math.acos(0.5 *((1.0 + q1)*q2 - (1.0 - q1)*q3)) + 1.0;
+                            z = Math.floor(r * Math.acos(0.5 *((1.0 + q1)*q2 - (1.0 - q1)*q3)) + 1.0);
                             dist[i][j] = dist[j][i] = z;
                         }
                     }

@@ -1,49 +1,42 @@
 package com.calculateTsp.tsp;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class MinimumSpanningTree {
 
     double[][] distancias;
     Arista arista = new Arista();
     Arista nuevaArista = new Arista();
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     public MinimumSpanningTree(int numCiudades) {
         distancias = new double[numCiudades][numCiudades];
     }
 
     public double setH(Problema problema, ArrayList<Integer> estado, int ciudadActual) {
-        double mst;
-        try {
+        int numCiudadesTotales = problema.getNumCiudades();
+        int numCiudades = numCiudadesTotales - estado.size() + 1; // +1 para aniadir la ciudad actual
+        int indice1 = 0;
+        int indice2;
 
-            int numCiudadesTotales = problema.getNumCiudades();
-            int numCiudades = numCiudadesTotales - estado.size() + 1; // +1 para aniadir la ciudad actual
-            int indice1 = 0;
-            int indice2;
+        for (int i = 0; i < numCiudadesTotales; i++) {
+            indice2 = 0;
 
-            for (int i = 0; i < numCiudadesTotales; i++) {
-                indice2 = 0;
+            if (!estado.contains(i) || i == ciudadActual) {
+                for (int j = 0; j < numCiudadesTotales; j++) {
 
-                if (!estado.contains(i) || i == ciudadActual) {
-                    for (int j = 0; j < numCiudadesTotales; j++) {
-
-                        if (!estado.contains(j) || j == ciudadActual) {
-                            distancias[indice1][indice2] = problema.getDistEntre(i, j);
-                            indice2++;
-                        }
-
+                    if (!estado.contains(j) || j == ciudadActual) {
+                        distancias[indice1][indice2] = problema.getDistEntre(i, j);
+                        indice2++;
                     }
-                    indice1++;
-                }
-            }
-            mst = calcularMst(distancias, numCiudades);
 
-        } catch (OutOfMemoryError err) {
-            System.out.println("en setH");
-            throw new RuntimeException();
+                }
+                indice1++;
+            }
         }
-        return mst;
+
+        return calcularMst(distancias, numCiudades);
     }
 
     private double calcularMst(double[][] distancias, int numCiudades) {
@@ -52,7 +45,6 @@ public class MinimumSpanningTree {
 
         int verticeOrigen = randomVertice(numCiudades);
         visitados[verticeOrigen] = true;
-        double minDistancia;
 
         //recorremos las filas
         for (int i = 0; i < numCiudades - 1; i++) {
@@ -95,10 +87,7 @@ public class MinimumSpanningTree {
      * @return vertice escogido
      */
     public int randomVertice(int vertices) {
-        Random r = new Random();
-        int low = 0;
-        int high = vertices;
-        return r.nextInt(high-low) + low;
+        return RANDOM.nextInt(vertices);
     }
 
 }

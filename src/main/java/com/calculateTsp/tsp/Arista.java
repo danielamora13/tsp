@@ -42,5 +42,25 @@ public class Arista implements Comparable<Arista> {
         return 0;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if ( this == obj ) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Arista arista = (Arista) obj;
+        return origen == arista.origen && destino == arista.getDestino() && Double.compare(arista.peso, peso) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Integer.hashCode(origen);
+        result = 31 * result + Integer.hashCode(destino);
+        result = 31 * result + Double.hashCode(peso);
+        return  result;
+    }
+
 
 }
